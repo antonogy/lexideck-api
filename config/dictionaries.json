@@ -1,0 +1,10 @@
+{
+  "en-ru": {
+    "dictName": "English-Русский FreeDict+WikDict dictionary (en-ru)",
+    "path": "./dicts/en-ru"
+  },
+  "ru-en": {
+    "dictName": "Русский-English FreeDict+WikDict dictionary (ru-en)",
+    "path": "./dicts/ru-en"
+  }
+}
