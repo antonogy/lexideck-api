@@ -6,6 +6,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { isAzureEnabled } from '../config/configuration';
 import {
   CanonicalPosTag,
   InternalTranslationResult,
@@ -59,7 +60,7 @@ export class AzureDictionaryService implements OnModuleInit {
   }
 
   private get enabled(): boolean {
-    return this.config.get<boolean>('azure.enabled') ?? true;
+    return isAzureEnabled(this.config);
   }
   private get key(): string {
     return this.config.get<string>('azure.key') ?? '';

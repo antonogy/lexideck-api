@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AzureDictionaryService } from '../azure/azure-dictionary.service';
+import { isAzureEnabled } from '../config/configuration';
 import { DictionaryConfigService } from '../sdcv/dictionary-config.service';
 import { mergeSdcvResults } from '../sdcv/merge';
 import { SdcvService } from '../sdcv/sdcv.service';
@@ -18,7 +19,7 @@ export class TranslateService {
   ) {}
 
   private get azureEnabled(): boolean {
-    return this.config.get<boolean>('azure.enabled') ?? true;
+    return isAzureEnabled(this.config);
   }
 
   async translate(req: TranslateRequestDto): Promise<TranslationResultDto> {
@@ -62,27 +63,22 @@ export class TranslateService {
       return result;
     }
 
-    if (result.provider === 'sdcv') {
-      try {
-        const examples = await this.azure.examples(
-          req.text,
-          result.normalizedTranslation,
-          req.from,
-          req.to,
-        );
-        return { ...result, examples };
-      } catch {
-        return result; // soft fail: examples stays []
+    // sdcv already served the primary result, so an Examples hiccup is soft
+    // (examples stays []); on the azure path it's hard (errors propagate → 502).
+    const swallow = result.provider === 'sdcv';
+    try {
+      const examples = await this.azure.examples(
+        req.text,
+        result.normalizedTranslation,
+        req.from,
+        req.to,
+      );
+      return { ...result, examples };
+    } catch (err) {
+      if (swallow) {
+        return result;
       }
+      throw err;
     }
-
-    // provider === 'azure': let errors propagate → 502
-    const examples = await this.azure.examples(
-      req.text,
-      result.normalizedTranslation,
-      req.from,
-      req.to,
-    );
-    return { ...result, examples };
   }
 }

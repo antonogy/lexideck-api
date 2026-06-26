@@ -1,3 +1,10 @@
+import { ConfigService } from '@nestjs/config';
+
+// Single source of truth for the Azure on/off gate (default: enabled).
+export function isAzureEnabled(config: ConfigService): boolean {
+  return config.get<boolean>('azure.enabled') ?? true;
+}
+
 export interface AppConfig {
   apiKey: string;
   azure: {

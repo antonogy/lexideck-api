@@ -78,7 +78,9 @@ export class SdcvService {
     // A single dict may return multiple entries (homographs, e.g. fly as
     // adjective/noun/verb). Concatenate their senses in order, then dedupe.
     const senses = dedupeAlternatives(
-      entries.flatMap((e) => parseDefinition(e.definition ?? '')),
+      entries.flatMap((e) =>
+        parseDefinition(e.definition ?? '', config.format),
+      ),
     );
 
     if (senses.length === 0) {

@@ -8,6 +8,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AzureDictionaryService } from '../azure/azure-dictionary.service';
+import { isAzureEnabled } from '../config/configuration';
 import { ExamplesRequestDto } from './dto/examples-request.dto';
 import { ExamplesResponseDto } from './dto/examples-response.dto';
 import { validateLanguagePair } from './supported-languages';
@@ -37,8 +38,7 @@ export class ExamplesController {
   ): Promise<ExamplesResponseDto> {
     validateLanguagePair(body.from, body.to);
 
-    const azureEnabled = this.config.get<boolean>('azure.enabled') ?? true;
-    if (!azureEnabled) {
+    if (!isAzureEnabled(this.config)) {
       return { examples: [] };
     }
 
