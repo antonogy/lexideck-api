@@ -19,6 +19,25 @@ function res(
 }
 
 describe('dedupeAlternatives', () => {
+  it('treats translations differing only by accent marks as duplicates', () => {
+    const out = dedupeAlternatives([
+      {
+        translation: 'муха',
+        normalizedTranslation: 'муха',
+        posTag: '',
+        canonicalPosTag: 'NOUN',
+      },
+      {
+        translation: 'му́ха', // му́ха — same word with stress accent
+        normalizedTranslation: 'му́ха',
+        posTag: '',
+        canonicalPosTag: 'NOUN',
+      },
+    ]);
+    expect(out).toHaveLength(1);
+    expect(out[0].translation).toBe('муха');
+  });
+
   it('dedupes by (translation, canonicalPosTag), keeping first occurrence', () => {
     const out = dedupeAlternatives([
       {
