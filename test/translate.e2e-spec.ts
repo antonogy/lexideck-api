@@ -91,17 +91,10 @@ describe('Translate API (e2e, sdcv-only)', () => {
       expect(res.status).toBe(200);
       expect(res.body.provider).toBe('sdcv');
       expect(res.body.source).toBe('fly');
-      expect(typeof res.body.translation).toBe('string');
-      expect(res.body.translation.length).toBeGreaterThan(0);
-      expect(Array.isArray(res.body.alternatives)).toBe(true);
+      expect(Array.isArray(res.body.senses)).toBe(true);
+      expect(res.body.senses.length).toBeGreaterThan(0);
+      expect(typeof res.body.senses[0].translation).toBe('string');
       expect(res.body.examples).toEqual([]);
-      // primary not duplicated into alternatives
-      expect(res.body.alternatives).not.toContainEqual(
-        expect.objectContaining({
-          translation: res.body.translation,
-          posTag: res.body.posTag,
-        }),
-      );
     });
 
     it('localizes posTag into the target language (ru)', async () => {
@@ -110,10 +103,7 @@ describe('Translate API (e2e, sdcv-only)', () => {
         { text: 'fly', from: 'en', to: 'ru' },
         KEY,
       );
-      const tags = [
-        res.body.posTag,
-        ...res.body.alternatives.map((a: any) => a.posTag),
-      ];
+      const tags = res.body.senses.map((s: any) => s.posTag);
       // all tags are either "" or Russian abbreviations, never English words
       expect(tags).not.toContain('verb');
       expect(tags.some((t: string) => ['гл', 'сущ', 'прил'].includes(t))).toBe(
@@ -128,9 +118,7 @@ describe('Translate API (e2e, sdcv-only)', () => {
         KEY,
       );
       expect(
-        res.body.alternatives.every(
-          (a: any) => a.canonicalPosTag === undefined,
-        ),
+        res.body.senses.every((s: any) => s.canonicalPosTag === undefined),
       ).toBe(true);
     });
 
@@ -141,8 +129,8 @@ describe('Translate API (e2e, sdcv-only)', () => {
         KEY,
       );
       expect(res.status).toBe(200);
-      expect(res.body.translation).toBe('fly');
-      expect(res.body.posTag).toBe('noun');
+      expect(res.body.senses[0].translation).toBe('fly');
+      expect(res.body.senses[0].posTag).toBe('noun');
     });
 
     it('uses normalized form when text itself is absent from the dict', async () => {

@@ -10,7 +10,7 @@ import { isAzureEnabled } from '../config/configuration';
 import {
   CanonicalPosTag,
   InternalTranslationResult,
-  TranslationAlternativeDto,
+  TranslationSenseDto,
   TranslationExampleDto,
 } from '../translate/dto/translation-result.dto';
 
@@ -86,7 +86,7 @@ export class AzureDictionaryService implements OnModuleInit {
       throw new NotFoundException();
     }
 
-    const senses: TranslationAlternativeDto[] = [...entry.translations]
+    const senses: TranslationSenseDto[] = [...entry.translations]
       .sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0))
       .map((t) => ({
         translation: t.displayTarget,

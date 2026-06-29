@@ -1,6 +1,6 @@
 import {
   InternalTranslationResult,
-  TranslationAlternativeDto,
+  TranslationSenseDto,
 } from '../translate/dto/translation-result.dto';
 
 // Strip combining diacritical marks (e.g. Russian stress accent U+0301)
@@ -13,8 +13,8 @@ function normalizeForKey(s: string): string {
 // Uses the language-agnostic canonical tag, NOT the localized posTag string.
 // Translations that differ only by accent/stress marks are treated as duplicates.
 export function dedupeAlternatives(
-  senses: TranslationAlternativeDto[],
-): TranslationAlternativeDto[] {
+  senses: TranslationSenseDto[],
+): TranslationSenseDto[] {
   const seen = new Set<string>();
   return senses.filter((s) => {
     // Key fields joined by NUL (a space can appear inside `translation`, so it
@@ -30,6 +30,8 @@ export function dedupeAlternatives(
 
 // results[] is parallel to queries[] (length 1 or 2).
 // queries[0] = normalized (if provided and different), else text.
+// `primary`/`secondary` here are merge-order concepts (normalized lookup first),
+// not API rank — all senses in the final result are treated as equal.
 export function mergeSdcvResults(
   queries: string[],
   results: (InternalTranslationResult | null)[],

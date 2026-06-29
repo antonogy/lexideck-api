@@ -42,26 +42,20 @@ export function localizePosTag(
 }
 
 // Converts InternalTranslationResult -> public TranslationResultDto.
-// Localizes POS tags, extracts senses[0] into the top-level fields, sets
-// alternatives = senses[1:] (primary excluded), strips canonicalPosTag.
+// Localizes POS tags for all senses, strips canonicalPosTag.
 export function finalizeResult(
   result: InternalTranslationResult,
   to: string,
 ): TranslationResultDto {
-  const localized = result.senses.map((s) => ({
+  const senses = result.senses.map((s) => ({
     translation: s.translation,
     normalizedTranslation: s.normalizedTranslation,
     posTag: localizePosTag(s.canonicalPosTag, to),
   }));
 
-  const [primary, ...alternatives] = localized;
-
   return {
     source: result.source,
-    translation: primary.translation,
-    normalizedTranslation: primary.normalizedTranslation,
-    posTag: primary.posTag,
-    alternatives,
+    senses,
     examples: result.examples,
     provider: result.provider,
   };

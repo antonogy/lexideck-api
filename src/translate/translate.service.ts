@@ -69,7 +69,7 @@ export class TranslateService {
     try {
       const examples = await this.azure.examples(
         req.text,
-        result.normalizedTranslation,
+        result.senses[0]?.normalizedTranslation ?? req.text,
         req.from,
         req.to,
       );

@@ -5,10 +5,10 @@ export type CanonicalPosTag = 'NOUN' | 'VERB' | 'ADJ' | 'ADV' | 'PREP';
 export type Provider = 'sdcv' | 'azure';
 
 // One parsed dictionary sense. Used internally as the element type for
-// SdcvService/AzureDictionaryService/merge output (senses[], senses[0] = primary),
-// and as the public shape for TranslationResultDto.alternatives (post-finalization,
-// primary extracted). `canonicalPosTag` is internal-only and stripped before serialization.
-export class TranslationAlternativeDto {
+// SdcvService/AzureDictionaryService/merge output, and as the public shape for
+// TranslationResultDto.senses (post-finalization). `canonicalPosTag` is internal-only
+// and stripped before serialization.
+export class TranslationSenseDto {
   @ApiProperty({ example: 'муха' })
   translation!: string;
 
@@ -38,10 +38,9 @@ export class TranslationExampleDto {
 }
 
 // Internal working shape produced by SdcvService / AzureDictionaryService / mergeSdcvResults.
-// senses[0] is primary; senses[1:] are secondary. Top-level translation fields are not set yet.
 export interface InternalTranslationResult {
   source: string;
-  senses: TranslationAlternativeDto[];
+  senses: TranslationSenseDto[];
   examples: TranslationExampleDto[];
   provider: Provider;
 }
@@ -51,20 +50,8 @@ export class TranslationResultDto {
   @ApiProperty({ example: 'fly' })
   source!: string;
 
-  @ApiProperty({ example: 'летать' })
-  translation!: string;
-
-  @ApiProperty({ example: 'летать' })
-  normalizedTranslation!: string;
-
-  @ApiProperty({ description: 'Localized POS abbreviation.', example: 'гл' })
-  posTag!: string;
-
-  @ApiProperty({
-    type: [TranslationAlternativeDto],
-    description: 'Other senses; excludes the primary translation.',
-  })
-  alternatives!: TranslationAlternativeDto[];
+  @ApiProperty({ type: [TranslationSenseDto] })
+  senses!: TranslationSenseDto[];
 
   @ApiProperty({ type: [TranslationExampleDto] })
   examples!: TranslationExampleDto[];

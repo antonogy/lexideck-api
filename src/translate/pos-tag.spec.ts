@@ -35,27 +35,27 @@ describe('finalizeResult', () => {
     ],
   };
 
-  it('extracts senses[0] into top-level fields with localized posTag', () => {
+  it('localizes posTag for all senses', () => {
     const r = finalizeResult(internal, 'ru');
-    expect(r.translation).toBe('летать');
-    expect(r.posTag).toBe('гл');
+    expect(r.senses[0].translation).toBe('летать');
+    expect(r.senses[0].posTag).toBe('гл');
     expect(r.provider).toBe('sdcv');
   });
 
-  it('sets alternatives to the remaining senses (primary excluded)', () => {
+  it('returns all senses in senses array', () => {
     const r = finalizeResult(internal, 'ru');
-    expect(r.alternatives).toHaveLength(1);
-    expect(r.alternatives[0].translation).toBe('муха');
-    expect(r.alternatives[0].posTag).toBe('сущ');
+    expect(r.senses).toHaveLength(2);
+    expect(r.senses[1].translation).toBe('муха');
+    expect(r.senses[1].posTag).toBe('сущ');
   });
 
   it('strips canonicalPosTag from output', () => {
     const r = finalizeResult(internal, 'ru');
-    expect((r.alternatives[0] as any).canonicalPosTag).toBeUndefined();
+    expect((r.senses[1] as any).canonicalPosTag).toBeUndefined();
   });
 
-  it('yields [] alternatives for a single sense', () => {
+  it('returns single-element senses array for a single sense', () => {
     const single = { ...internal, senses: [internal.senses[0]] };
-    expect(finalizeResult(single, 'ru').alternatives).toEqual([]);
+    expect(finalizeResult(single, 'ru').senses).toHaveLength(1);
   });
 });

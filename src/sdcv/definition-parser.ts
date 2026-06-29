@@ -1,6 +1,6 @@
 import {
   CanonicalPosTag,
-  TranslationAlternativeDto,
+  TranslationSenseDto,
 } from '../translate/dto/translation-result.dto';
 import { GRAMMAR_NAMES, stripTextPos } from './pos-recognition';
 
@@ -25,7 +25,7 @@ const GRAMMAR_IN_DIV = /class="grammar"[^>]*>([^<]+)</i;
 export function parseDefinition(
   definition: string,
   format: DefinitionFormat,
-): TranslationAlternativeDto[] {
+): TranslationSenseDto[] {
   if (!definition || !definition.trim()) {
     return [];
   }
@@ -34,11 +34,11 @@ export function parseDefinition(
     : parseTextDefinition(definition);
 }
 
-function parseHtmlDefinition(definition: string): TranslationAlternativeDto[] {
+function parseHtmlDefinition(definition: string): TranslationSenseDto[] {
   // Walk leaf divs in document order, tracking the most recent grammar marker so
   // that each translation gets the POS of the homograph block it belongs to —
   // correct even when one definition contains multiple POS blocks.
-  const senses: TranslationAlternativeDto[] = [];
+  const senses: TranslationSenseDto[] = [];
   let currentPos: CanonicalPosTag | null = null;
   let m: RegExpExecArray | null;
   LEAF_DIV.lastIndex = 0;
@@ -70,8 +70,8 @@ function parseHtmlDefinition(definition: string): TranslationAlternativeDto[] {
   return senses;
 }
 
-function parseTextDefinition(definition: string): TranslationAlternativeDto[] {
-  const senses: TranslationAlternativeDto[] = [];
+function parseTextDefinition(definition: string): TranslationSenseDto[] {
+  const senses: TranslationSenseDto[] = [];
   for (const raw of definition.split(/\r?\n/)) {
     const line = raw.replace(SENSE_MARKER, '').trim();
     if (!line) {
