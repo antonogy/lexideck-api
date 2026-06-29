@@ -49,6 +49,7 @@ export function finalizeResult(
 ): TranslationResultDto {
   const senses = result.senses.map((s) => ({
     translation: s.translation,
+    description: s.description,
     normalizedTranslation: s.normalizedTranslation,
     posTag: localizePosTag(s.canonicalPosTag, to),
   }));

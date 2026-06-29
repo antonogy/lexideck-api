@@ -21,14 +21,14 @@ describe('finalizeResult', () => {
     examples: [],
     senses: [
       {
-        translation: 'летать',
-        normalizedTranslation: 'летать',
+        translation: ['летать'],
+        description: ['to move through the air'],
         posTag: '',
         canonicalPosTag: 'VERB',
       },
       {
-        translation: 'муха',
-        normalizedTranslation: 'муха',
+        translation: ['муха'],
+        description: [],
         posTag: '',
         canonicalPosTag: 'NOUN',
       },
@@ -37,7 +37,7 @@ describe('finalizeResult', () => {
 
   it('localizes posTag for all senses', () => {
     const r = finalizeResult(internal, 'ru');
-    expect(r.senses[0].translation).toBe('летать');
+    expect(r.senses[0].translation).toEqual(['летать']);
     expect(r.senses[0].posTag).toBe('гл');
     expect(r.provider).toBe('sdcv');
   });
@@ -45,8 +45,14 @@ describe('finalizeResult', () => {
   it('returns all senses in senses array', () => {
     const r = finalizeResult(internal, 'ru');
     expect(r.senses).toHaveLength(2);
-    expect(r.senses[1].translation).toBe('муха');
+    expect(r.senses[1].translation).toEqual(['муха']);
     expect(r.senses[1].posTag).toBe('сущ');
+  });
+
+  it('passes through description array', () => {
+    const r = finalizeResult(internal, 'ru');
+    expect(r.senses[0].description).toEqual(['to move through the air']);
+    expect(r.senses[1].description).toEqual([]);
   });
 
   it('strips canonicalPosTag from output', () => {

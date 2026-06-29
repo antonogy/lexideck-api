@@ -6,7 +6,7 @@ import { promisify } from 'util';
 import { InternalTranslationResult } from '../translate/dto/translation-result.dto';
 import { parseDefinition } from './definition-parser';
 import { DictionaryConfig } from './dictionary-config.service';
-import { dedupeAlternatives } from './merge';
+import { dedupeSenceTranslations } from './merge';
 
 const execFileAsync = promisify(execFile);
 
@@ -76,8 +76,9 @@ export class SdcvService {
     }
 
     // A single dict may return multiple entries (homographs, e.g. fly as
-    // adjective/noun/verb). Concatenate their senses in order, then dedupe.
-    const senses = dedupeAlternatives(
+    // adjective/noun/verb). Concatenate their senses in order, then dedupe
+    // duplicate translations within each sense.
+    const senses = dedupeSenceTranslations(
       entries.flatMap((e) =>
         parseDefinition(e.definition ?? '', config.format),
       ),

@@ -89,7 +89,8 @@ export class AzureDictionaryService implements OnModuleInit {
     const senses: TranslationSenseDto[] = [...entry.translations]
       .sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0))
       .map((t) => ({
-        translation: t.displayTarget,
+        translation: [t.displayTarget],
+        description: [],
         normalizedTranslation: t.normalizedTarget,
         posTag: '',
         canonicalPosTag: AZURE_TO_CANONICAL[t.posTag?.toUpperCase()] ?? null,

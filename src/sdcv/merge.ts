@@ -9,22 +9,21 @@ function normalizeForKey(s: string): string {
   return s.normalize('NFD').replace(/\p{Mn}/gu, '');
 }
 
-// Dedupe by (translation, canonicalPosTag), preserving first-occurrence order.
-// Uses the language-agnostic canonical tag, NOT the localized posTag string.
-// Translations that differ only by accent/stress marks are treated as duplicates.
-export function dedupeAlternatives(
+// Deduplicates the translation[] array within each sense, removing entries that
+// differ only by accent/stress marks from an earlier entry in the same sense.
+// Preserves sense order and first-occurrence order within each translation list.
+export function dedupeSenceTranslations(
   senses: TranslationSenseDto[],
 ): TranslationSenseDto[] {
-  const seen = new Set<string>();
-  return senses.filter((s) => {
-    // Key fields joined by NUL (a space can appear inside `translation`, so it
-    // would not unambiguously delimit translation from canonicalPosTag).
-    const key = `${normalizeForKey(s.translation)}\0${s.canonicalPosTag ?? ''}`;
-    if (seen.has(key)) {
-      return false;
-    }
-    seen.add(key);
-    return true;
+  return senses.map((s) => {
+    const seen = new Set<string>();
+    const translation = s.translation.filter((t) => {
+      const key = normalizeForKey(t);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return { ...s, translation };
   });
 }
 
@@ -47,7 +46,7 @@ export function mergeSdcvResults(
   const secondary = primary === normalizedResult ? textResult : null;
 
   const senses = secondary
-    ? dedupeAlternatives([...primary.senses, ...secondary.senses])
+    ? dedupeSenceTranslations([...primary.senses, ...secondary.senses])
     : primary.senses;
 
   return { ...primary, senses };

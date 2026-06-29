@@ -9,11 +9,17 @@ export type Provider = 'sdcv' | 'azure';
 // TranslationResultDto.senses (post-finalization). `canonicalPosTag` is internal-only
 // and stripped before serialization.
 export class TranslationSenseDto {
-  @ApiProperty({ example: 'муха' })
-  translation!: string;
+  @ApiProperty({ example: ['муха'], type: [String] })
+  translation!: string[];
 
-  @ApiProperty({ example: 'муха' })
-  normalizedTranslation!: string;
+  @ApiProperty({
+    example: ['(non-technical) any fly of family Muscidae'],
+    type: [String],
+  })
+  description!: string[];
+
+  @ApiProperty({ example: 'муха', required: false })
+  normalizedTranslation?: string;
 
   @ApiProperty({
     description:
