@@ -16,15 +16,6 @@ export class TranslateRequestDto {
   @IsNotEmpty()
   text!: string;
 
-  @ApiPropertyOptional({
-    description:
-      'Client-supplied lemma/normalized form of `text` (e.g. NLTagger).',
-    example: 'fly',
-  })
-  @IsString()
-  @IsOptional()
-  normalized?: string;
-
   @ApiProperty({ description: 'BCP 47 source language code.', example: 'en' })
   @IsString()
   @Length(2, 2)
