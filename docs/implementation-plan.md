@@ -65,7 +65,6 @@ Create all DTOs in `src/translate/dto/`:
 ```typescript
 class TranslateRequestDto {
   @IsString() @IsNotEmpty() text: string;
-  @IsString() @IsOptional() normalized?: string;
   @IsString() @Length(2, 2) from: string;
   @IsString() @Length(2, 2) to: string;
   @IsBoolean() @IsOptional() withExamples?: boolean;
@@ -127,7 +126,7 @@ Implement standalone functions (not class methods) in `src/translate/pos-tag.ts`
 
 - `POS_LABELS` table (canonical → per-language abbreviation, all 10 languages)
 - `localizePosTag(canonicalTag, to): string`
-- `finalizeResult(result: InternalTranslationResult, to: string): TranslationResultDto` — localizes POS tags, extracts `senses[0]` into top-level fields, sets `alternatives = senses[1:]`, strips `canonicalPosTag` from output
+- `finalizeResult(result: InternalTranslationResult, to: string): TranslationResultDto` — localizes POS tags for all senses, returns `{source, senses[], examples[], provider}`; strips `canonicalPosTag` from output. No primary extraction — `senses[]` is returned in full.
 
 ### 2.5 — `TranslateService` (Azure-only stub)
 
@@ -216,17 +215,15 @@ Apply `SDCV_TIMEOUT_MS` as the child process timeout.
 Create `src/sdcv/definition-parser.ts`:
 
 ```typescript
-function parseDefinition(definition: string): TranslationAlternativeDto[]
+function parseDefinition(definition: string, format: 'html' | 'text'): TranslationSenseDto[]
 ```
 
-Algorithm per the spec:
-1. Split `definition` by newlines, discard empty lines
-2. Strip leading sense markers (`1)`, `2.`, `•`, etc.) via regex
-3. Match leading POS abbreviation against recognition table → `canonicalPosTag`; strip the abbreviation from the remainder
-4. Remainder (trimmed) → `translation`; set `normalizedTranslation = translation`
-5. Return one `TranslationAlternativeDto` per line
+Two parser paths selected by `format` (declared per-dictionary in `dictionaries.json`):
 
-POS recognition table (in `src/sdcv/pos-recognition.ts`):
+**HTML format** (`sametypesequence=h`, WikDict/FreeDict): structural mini-parser walks 8 templates (T1-T8) covering single-sense, flat translation list, sense list, and description+translation-list patterns. Produces `translation: string[]` and `description: string[]` per sense. Extracts canonical POS from the grammar `<div>`. Does **not** set `normalizedTranslation`.
+
+**Text format**: line-splitting with sense-marker stripping, same POS recognition table:
+
 ```typescript
 const POS_PATTERNS: [RegExp, CanonicalPosTag][] = [
   [/^(n\.|сущ\.)\s*/i, 'NOUN'],
@@ -236,12 +233,13 @@ const POS_PATTERNS: [RegExp, CanonicalPosTag][] = [
   [/^(prep\.|предл\.)\s*/i, 'PREP'],
 ];
 ```
+Remainder → `translation: [text]`, `description: []`. Does **not** set `normalizedTranslation`.
 
-### 4.4 — Merge logic
+### 4.4 — Within-sense dedup
 
-Add `mergeSdcvResults(queries, results)` and `dedupeAlternatives(senses)` in `src/sdcv/merge.ts` per the spec:
-- Prefer `normalized` query's result as primary
-- Append `text` query's senses after dedup by `(translation, canonicalPosTag ?? '')`
+`dedupeSenceTranslations(senses)` in `src/sdcv/merge.ts` deduplicates `translation[]` within each sense — removing entries that differ only by accent/stress marks (NFD normalization). Operates per-sense, not cross-sense. Called inside `SdcvService.lookup()` after parsing all homograph entries.
+
+No `mergeSdcvResults` or cross-lookup merging — a single `sdcv.lookup(req.text)` call is made.
 
 ### 4.5 — Update `TranslateService`
 
@@ -252,19 +250,13 @@ async translate(req): Promise<TranslationResultDto> {
   const config = this.dictConfig.getConfig(req.from, req.to);
 
   if (config) {
-    const queries = (req.normalized && req.normalized !== req.text)
-      ? [req.normalized, req.text]
-      : [req.text];
-
-    const results = await Promise.all(queries.map(q => this.sdcv.lookup(q, config)));
-    // any throw → propagates as 502
-
-    const merged = mergeSdcvResults(queries, results);
-    if (merged) {
-      const final = finalizeResult(merged, req.to);
+    // Any sdcv error/crash/timeout → 502, no Azure fallback.
+    const result = await this.sdcv.lookup(req.text, config);
+    if (result) {
+      const final = finalizeResult(result, req.to);
       return this.maybeAttachExamples(final, req); // soft-fail
     }
-    // both null → fall through
+    // null → fall through
   }
 
   if (!this.config.azure.enabled) throw new NotFoundException();
