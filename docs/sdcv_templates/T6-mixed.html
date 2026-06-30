@@ -1,0 +1,83 @@
+<!--
+T6: Complex mixed — sense list with description sublists, direct translations, and translation sublists
+Seen in: вода, water, light, set/noun (EN→RU); ставить-like nesting in EN→RU entries
+-->
+
+<!-- Example: вода (RU→EN) — most complex observed -->
+<div>
+  /<font color="gray">vʌdˈɑ</font>/<br />
+  <div><font class="grammar" color="green">noun</font></div>
+  <ol>
+    <li>
+      <ol>
+        <li>
+          ед. ч., хим. оксид водорода (H2O), бинарный неорганический амфолит, растворитель (наиболее
+          распространённый на Земле); жидкость без цвета, запаха и вкуса (при н. у.)
+        </li>
+        <li>диал., рег. (поморск.): прилив, отлив, а также промежуток времени между ними</li>
+        <li>мед., мн. ч. амниотическая жидкость</li>
+      </ol>
+      <div>dihydrogen monoxide</div>
+    </li>
+    <li>
+      безалкогольный напиток, состоящий большей частью из воды́ [1] или [2], в особенности с примесью
+      газа, сахара и красителей
+      <ol>
+        <li><div>ade</div></li>
+        <li><div>drink</div></li>
+      </ol>
+    </li>
+    <li>
+      геогр., полит., мн. ч. часть морского, озёрного или речного пространства
+      <div>waters</div>
+    </li>
+    <li>
+      мн. ч. целебный источник либо лечение с его помощью
+      <ol>
+        <li><div>dihydrogen monoxide</div></li>
+        <li><div>spa</div></li>
+      </ol>
+    </li>
+  </ol>
+</div>
+<!--
+STRUCTURE:
+  <div>
+    /IPA/<br>
+    <div><font grammar>POS</font></div>
+    <ol>
+
+      ← VARIANT A: description sublist + shared single translation
+      <li>
+        <ol>
+          <li>SUB_DESC1</li>   ← sub-descriptions, no translations here!
+          <li>SUB_DESC2</li>
+          <li>SUB_DESC3</li>
+        </ol>
+        <div>SHARED_TRANSLATION</div>  ← one translation for all sub-descs
+      </li>
+
+      ← VARIANT B: inline description + translation sublist  (T5 style)
+      <li>SENSE_DESCRIPTION
+        <ol>
+          <li><div>T1</div></li>
+          <li><div>T2</div></li>
+        </ol>
+      </li>
+
+      ← VARIANT C: inline description + single direct translation  (T4 style)
+      <li>SENSE_DESCRIPTION<div>TRANSLATION</div></li>
+
+    </ol>
+  </div>
+
+KEY DISTINCTION from T5:
+  T5 sub-<ol> items contain <div>TRANSLATION</div>
+  T6 can have sub-<ol> items that contain only plain text (sub-descriptions),
+  with the shared translation placed AFTER the sub-<ol> as a sibling <div>
+
+NOTES:
+  - bank (EN→RU) also exhibits VARIANT A: sense 2 has desc-sublist + shared <div>банк</div>
+  - These three variants freely mix within a single outer <ol>
+  - Deepest observed nesting: 3 levels (outer sense ol > desc ol / trans ol > div)
+-->

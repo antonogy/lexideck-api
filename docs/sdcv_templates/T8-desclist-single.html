@@ -1,0 +1,41 @@
+<!--
+T8: Description list + single translation
+Seen in: tierra, poder, hacer (ES→RU); земля, мочь/verb (RU→ES)
+
+Differs from T7: T7 ends with a translation <ol>; T8 ends with a single <div>TRANSLATION</div>.
+Differs from T2: T2 has plain inline description text; T8 wraps descriptions in an <ol>.
+-->
+
+<!-- Example: tierra (ES→RU) -->
+<div>
+  <div><font class="grammar" color="green">noun</font></div>
+  <ol>
+    <li>Superficie del planeta Tierra que no se encuentra cubierta por agua.</li>
+    <li>Material granuloso y oscuro que compone el suelo.</li>
+    <li>Suelo.</li>
+    <li>País, región, territorio o porción de terreno.</li>
+  </ol>
+  <div>земля</div>
+</div>
+<!--
+STRUCTURE:
+  <div>
+    <div><font grammar>POS</font></div>
+    <ol>
+      <li>DESCRIPTION1</li>   ← sub-descriptions, no translations
+      <li>DESCRIPTION2</li>
+      ...
+    </ol>
+    <div>TRANSLATION</div>   ← single shared translation after the desc list
+  </div>
+
+KEY DISTINCTION:
+  vs T2: description is in an <ol> list, not plain inline text
+  vs T7: second block is a bare <div>TRANSLATION</div>, not a <ol> of translations
+  vs T6-VariantA: no outer sense <ol> wrapper — desc <ol> and translation <div> are direct children of root <div>
+
+NOTES:
+  - All descriptions share one translation — the list enumerates senses of the same concept
+  - Number of descriptions and number of translations are decoupled (N descs → 1 trans)
+  - Confirmed in both ES→RU (tierra, poder, hacer) and RU→ES (земля, мочь/verb)
+-->

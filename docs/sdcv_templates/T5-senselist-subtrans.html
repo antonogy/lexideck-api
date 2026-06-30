@@ -1,0 +1,60 @@
+<!--
+T5: Sense list, each sense has a translation sublist
+Seen in: дом, время (RU→EN); fly/noun, bank/noun (EN→RU)
+-->
+
+<!-- Example: дом (RU→EN) -->
+<div>
+  /<font color="gray">dˈom</font>/<br />
+  <div><font class="grammar" color="green">noun</font></div>
+  <ol>
+    <li>
+      архитектурное сооружение, предназначенное для жилья, и имеющее, как правило, стены, дверь и
+      крышу
+      <ol>
+        <li><div>house</div></li>
+        <li><div>home</div></li>
+      </ol>
+    </li>
+    <li>
+      офиц. совокупность жилых или производственных корпусов, а также служебных строений,
+      расположенных на одном земельном участке и имеющих один учётный номер
+      <ol>
+        <li><div>home</div></li>
+        <li><div>house</div></li>
+      </ol>
+    </li>
+    <li>
+      перен. фирма, предприятие
+      <div>house</div>
+    </li>
+  </ol>
+</div>
+<!--
+STRUCTURE:
+  <div>
+    /IPA/<br>
+    <div><font grammar>POS</font></div>
+    <ol>
+      <li>SENSE_DESCRIPTION                  ← sense 1: description inline
+        <ol>
+          <li><div>TRANSLATION1</div></li>   ← translation sublist
+          <li><div>TRANSLATION2</div></li>
+        </ol>
+      </li>
+      <li>SENSE_DESCRIPTION
+        <ol>
+          <li><div>TRANSLATION1</div></li>
+          <li><div>TRANSLATION2</div></li>
+        </ol>
+      </li>
+      <li>SENSE_DESCRIPTION<div>TRANSLATION</div></li>  ← sense with single direct translation (T4 mixed in)
+    </ol>
+  </div>
+
+NOTES:
+  - Each <li> in outer <ol> = one sense
+  - Translations inside each sense are in a nested <ol><li><div>T</div></li></ol>
+  - A sense can also use direct <div>T</div> (T4 style) — mix is common
+  - "дом" sense 3 uses direct <div> while senses 1-2 use sublist
+-->

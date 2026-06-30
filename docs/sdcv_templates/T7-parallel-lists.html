@@ -1,0 +1,42 @@
+<!--
+T7: Two parallel <ol> blocks — descriptions list then translations list
+Seen in: ставить (RU→EN) — rare pattern
+-->
+<div>
+  /<font color="gray">stˈɑvʲitʲ</font>/<br />
+  <div><font class="grammar" color="green">verb</font></div>
+  <ol>
+    <li>помещать на опору в стоячем положении, не плашмя</li>
+    <li>помещать в определённое место или положение</li>
+  </ol>
+  <ol>
+    <li><div>place</div></li>
+    <li><div>make stand</div></li>
+    <li><div>set</div></li>
+    <li><div>set up</div></li>
+  </ol>
+</div>
+<!--
+STRUCTURE:
+  <div>
+    /IPA/<br>
+    <div><font grammar>POS</font></div>
+    <ol>                        ← FIRST ol: sense descriptions only
+      <li>DESCRIPTION1</li>
+      <li>DESCRIPTION2</li>
+    </ol>
+    <ol>                        ← SECOND ol: translations only
+      <li><div>T1</div></li>
+      <li><div>T2</div></li>
+      <li><div>T3</div></li>
+      <li><div>T4</div></li>
+    </ol>
+  </div>
+
+NOTES:
+  - Two sibling <ol> elements at same depth, no nesting between them
+  - First <ol>: plain text <li> items (descriptions, no translations)
+  - Second <ol>: <li><div>TRANSLATION</div></li> items (translations, no descriptions)
+  - No structural link between desc count and trans count (2 descs, 4 trans)
+  - Rare: only ставить shows this pattern in the 20-word corpus
+-->
